@@ -62,7 +62,57 @@
 
 int * readIntegers(const char * filename, int * numberOfIntegers)
 {
-    return NULL;
+	int *array;
+	int i;
+	int j;
+	int k;
+	FILE *fh;
+	
+	fh = fopen(filename,"r");
+	//printf("TestFOPEN.\n");
+	if(fh == NULL)
+	{
+		//printf("TestNULL.\n");
+		return NULL;
+	}
+	while(fscanf(fh,"%d",&i) == 1)
+	{
+		//printf("TestWHILE.\n");
+		i++;
+	}
+	i = i - 1;
+
+	//printf("TestBEFOREMALLOC.\n");
+	array = malloc(i * sizeof(int));
+	//printf("TestAFTERMALLOC.\n");
+		
+	fseek(fh, 0, SEEK_SET);
+	
+	//printf("TestAFTERSEEK_SET.\n");
+	
+	for(k = 0; k < i; k++)
+	{
+		printf("%d\n", array[k]);
+	}
+	
+	for(j = 0; j < i; j++)
+	{
+		//printf("TestFOR.\n");
+		fscanf(fh, "%d", &array[j]);
+	}
+	
+	for(k = 0; k < i; k++)
+	{
+		printf("%d\n", array[k]);
+	}
+	
+	//printf("TestAFTERFOR.\n");
+	
+	fclose(fh);
+	
+	//printf("TestAFTERCLOSE.\n");
+	
+	return array;
 }
 
 /**
@@ -151,9 +201,31 @@ void sort(int * arr, int length)
  * }
  * return -1;
  */
-int search(int * arr, int length, int key)
+int search_helper(int * arr, int low, int high, int key)
 {
-    return -1;
+	int index;
+	
+	if(low > high)
+	{
+		return -1;
+	}
+	
+	index = (low + high) / 2;
+	
+	if(arr[index] == key)
+	{
+		return index; //found key
+	}
+	
+	if(arr[index] > key) //discarding upper half of array
+	{
+		return search_helper(arr, low, (index - 1), key);
+	}
+	
+	return search_helper(arr, (index + 1), high, key);
 }
 
-
+int search(int * arr, int length, int key)
+{
+	return search_helper(arr, 0, length, key);
+}
