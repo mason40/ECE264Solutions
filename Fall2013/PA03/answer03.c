@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void sort_helper(int * arr, int low_index, int high_index);
+int search_helper(int * arr, int low, int high, int key);
+
 /**
  * Read a file of integers.
  *
@@ -63,54 +66,35 @@
 int * readIntegers(const char * filename, int * numberOfIntegers)
 {
 	int *array;
-	int i;
-	int j;
-	int k;
+	int i = 0;
+	int j = 0;
+	int temp;
 	FILE *fh;
 	
 	fh = fopen(filename,"r");
-	//printf("TestFOPEN.\n");
+
 	if(fh == NULL)
 	{
-		//printf("TestNULL.\n");
 		return NULL;
 	}
-	while(fscanf(fh,"%d",&i) == 1)
+	while(fscanf(fh,"%d",&temp) == 1)
 	{
-		//printf("TestWHILE.\n");
 		i++;
 	}
-	i = i - 1;
+	
+	*numberOfIntegers = i;
 
-	//printf("TestBEFOREMALLOC.\n");
 	array = malloc(i * sizeof(int));
-	//printf("TestAFTERMALLOC.\n");
 		
 	fseek(fh, 0, SEEK_SET);
 	
-	//printf("TestAFTERSEEK_SET.\n");
-	
-	for(k = 0; k < i; k++)
-	{
-		printf("%d\n", array[k]);
-	}
-	
 	for(j = 0; j < i; j++)
 	{
-		//printf("TestFOR.\n");
+
 		fscanf(fh, "%d", &array[j]);
 	}
-	
-	for(k = 0; k < i; k++)
-	{
-		printf("%d\n", array[k]);
-	}
-	
-	//printf("TestAFTERFOR.\n");
-	
+
 	fclose(fh);
-	
-	//printf("TestAFTERCLOSE.\n");
 	
 	return array;
 }
@@ -152,9 +136,60 @@ int * readIntegers(const char * filename, int * numberOfIntegers)
  * sort.
  *
  */
+void sort_helper(int * arr, int low_index, int high_index)
+{
+	int index1 = low_index;
+	int pivot = arr[index1];
+	int index2 = high_index;
+	int left = index1 + 1;
+	int right = index2;
+	int left_swap = 0;
+	int right_swap = 0;
+	int pivot_swap = 0;
+	
+	if(low_index == high_index)
+	{
+		return;
+	}
+	
+	while(left < right)
+	{
+		while((pivot > arr[left]) && (left != high_index))
+		{
+			left++;
+		}
+		while(pivot < arr[right] && (right != low_index + 1))
+		{
+			right--;
+		}
+		if(right > left)
+		{
+			left_swap = arr[left];
+			right_swap = arr[right];
+			arr[left] = right_swap;
+			arr[right] = left_swap;
+		}
+	}
+	if(arr[left] > pivot)
+	{
+		pivot_swap = arr[left-1];
+		arr[left-1] = pivot;
+		arr[index1] = pivot_swap;
+	}
+	if(arr[left] < pivot)
+	{
+		pivot_swap = arr[left];
+		arr[left] = pivot;
+		arr[index1] = pivot_swap;
+	}
+	sort_helper(arr, low_index, right-1);
+	sort_helper(arr, left, high_index);
+}
+
+
 void sort(int * arr, int length)
 {
-    
+    return sort_helper(arr, 0, length-1);
 }
 
 /**
@@ -227,5 +262,5 @@ int search_helper(int * arr, int low, int high, int key)
 
 int search(int * arr, int length, int key)
 {
-	return search_helper(arr, 0, length, key);
+	return search_helper(arr, 0, length-1, key);
 }
