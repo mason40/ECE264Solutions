@@ -157,7 +157,7 @@ void partitionDecHelp(int * part, int index, int left)
 	  }
 	else if(part[index - 1] > value)
 	{
-			partitionDecHelp(part, index + 1, left - value);
+		partitionDecHelp(part, index + 1, left - value);
 	}
   }
 }
@@ -315,6 +315,10 @@ void partitionOddAndEven(int value)
  */
 int primetest(int value)
 {
+	if(value == 2 || value == 3)
+	{
+		return 1;
+	}
 	if(value % 2 == 0)
 	{
 		return 0;
@@ -325,9 +329,9 @@ int primetest(int value)
 	
 	max = floor(sqrt(value));
 	
-	for(i = 2; i < max; i++)
+	for(i = 3; i <= max; i += 2)
 	{
-		if(value % ((2 * i) + 1) == 0)
+		if(value % i == 0)
 		{
 			return 0;
 		}
@@ -346,18 +350,13 @@ void partitionPrimeHelp(int * part, int index, int left)
 	  return;
   }
   for (value = 2; value <= left; value++)
-  //for (value = left; value > left; value--)
   {
 	  part[index] = value;
 	  test = primetest(value);
-	  
+
 	  if(test != 0)
 	  {
-		partitionPrimeHelp(part, index += 1, left - value);
-	  }
-	  else
-	  {
-		  return;
+		partitionPrimeHelp(part, index + 1, left - value);
 	  }
   }
 }
